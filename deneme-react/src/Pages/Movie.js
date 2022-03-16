@@ -21,34 +21,20 @@ export class Movie extends Component{
     FilterFn() {
         var MovieIdFilter = this.state.MovieIdFilter;
         var MovieNameFilter = this.state.MovieNameFilter;
-        console.log(MovieNameFilter);
 
-        /*var filteredData = this.state.moviesWithoutFilter.filter(
-            function(element){
-                console.log("el: "+element.MovieId);
-                return element.MovieId.toString().toLowercase().includes(
-                    MovieIdFilter.toString().trim().toLowerCase()
-                )&&
-                element.MovieName.toString().toLowercase().includes(
-                    MovieNameFilter.toString().trim().toLowerCase()
-                )
-            }
-        );*/
-        var x = this.state.moviesWithoutFilter;
-        console.log("x: "+x.map(hey=>hey.id));
-        var filteredData=x.filter(
+        
+        var filteredData=this.state.moviesWithoutFilter.filter(
             function(el){
-                console.log("el: "+x.map(hey=>hey.movieTitle));
-                return (x.map(hey=>hey.id).toString().toLowerCase().includes(
+                return (el.id.toString().toLowerCase().includes(
                     MovieIdFilter.toString().trim().toLowerCase()
                 )&&
-                x.map(hey=>hey.movieTitle).toString().toLowerCase().includes(
+                el.movieTitle.toString().toLowerCase().includes(
                     MovieNameFilter.toString().trim().toLowerCase()
                 ))
             }
         );
+
         this.setState({movies:filteredData});
-        console.log("data filter:" +this.state.movies);
     }
 
     changeMovieIdFilter = (e) => {
