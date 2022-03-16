@@ -1,0 +1,141 @@
+using Microsoft.AspNetCore.Mvc;
+using WebAPIDenemeEntity2.Models;
+
+namespace WebAPIDenemeEntity2.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class MovieController : ControllerBase
+    {
+        
+
+        [HttpGet]
+        public IEnumerable<Movie> Get()
+        {
+            using(var context = new MovieDBContext())
+            {
+                
+                
+                //add a movie
+                /*
+                Movie movie = new Movie();
+                movie.MovieTitle = "Dogum Gunu";
+                movie.ReleaseDate = DateTime.SpecifyKind(new DateTime(2001,3,28), DateTimeKind.Utc);
+                movie.ImdbRank = (decimal?)2.1;
+
+                context.Movies.Add(movie);
+
+                context.SaveChanges();
+                
+                */
+
+
+                //update a row
+                
+                
+
+
+                //remove movie
+                /*
+                Movie movie = context.Movies.Where(mov => mov.Id == 8).FirstOrDefault();
+                context.Movies.Remove(movie);
+
+                context.SaveChanges();
+                */
+
+                //get all movies
+                return context.Movies.OrderBy(x=>x.Id).ToList();
+
+                //get movie by id
+                //return context.Movies.Where(mov => mov.MovieTitle == "Kalem Kutusu").ToList();
+
+            }
+        }
+
+        [HttpPut("{id}")]
+        public IEnumerable<Movie> Put(long id, Movie client)
+        {
+            using (var context = new MovieDBContext())
+            {
+                //update a row
+
+                Movie movie = context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
+                movie.MovieTitle = client.MovieTitle;
+                movie.ReleaseDate = client.ReleaseDate;
+                movie.ImdbRank= client.ImdbRank;
+
+                context.SaveChanges();
+
+                //get all movies
+                return context.Movies.Where(mov=>mov.Id == id).ToList();
+
+
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IEnumerable<Movie> Delete(long id)
+        {
+            using (var context = new MovieDBContext())
+            {
+                Movie movie = context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
+                context.Movies.Remove(movie);
+
+                context.SaveChanges();
+
+                return context.Movies.OrderBy(x => x.Id).ToList();
+            }   
+        }
+
+        [HttpPost]
+        public IEnumerable<Movie> Post(Movie client)
+        {
+            using (var context = new MovieDBContext())
+            {
+                Movie movie = new Movie();
+                movie.MovieTitle = client.MovieTitle;
+                //movie.ReleaseDate = DateTime.SpecifyKind(new DateTime(2001, 3, 28), DateTimeKind.Utc);
+                movie.ReleaseDate= client.ReleaseDate;
+                movie.ImdbRank = (decimal?)client.ImdbRank;
+                context.Movies.Add(movie);
+
+                context.SaveChanges();
+
+                return context.Movies.Where(mov => mov.Id == movie.Id).ToList();
+            }
+        }
+
+
+        /*
+        [HttpPut("{id}")]
+        public IEnumerable<Movie> Put_Movie(long id, Movie client)
+        {
+            using (var context = new MovieDBContext())
+            {
+
+
+                
+
+
+
+
+                //update a row
+                
+                Movie movie = context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
+                movie.MovieTitle = client.MovieTitle;
+
+                context.SaveChanges();
+                
+
+
+                
+
+                //get all movies
+                return context.Movies.ToList();
+
+
+            }
+        }*/
+
+    }
+}
