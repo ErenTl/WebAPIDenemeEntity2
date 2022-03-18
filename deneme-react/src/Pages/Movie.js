@@ -37,6 +37,18 @@ export class Movie extends Component{
         this.setState({movies:filteredData});
     }
 
+    sortResult(prop, asc) {
+        var sortedData = this.state.moviesWithoutFilter.sort(function(a,b) {
+            if(asc) {
+                return (a[prop]>b[prop])?1:((a[prop]<b[prop])?-1:0);
+            } else {
+                return (b[prop]>a[prop])?1:((b[prop]<a[prop])?-1:0);
+            }
+        });
+
+        this.setState({movies:sortedData});
+    }
+
     changeMovieIdFilter = (e) => {
         this.state.MovieIdFilter=e.target.value;
         this.FilterFn();
@@ -190,13 +202,37 @@ export class Movie extends Component{
                 <thead>
                     <tr>
                         <th>
-                            <input className='form-control m-2' onChange={this.changeMovieIdFilter} 
-                                placeholder="Filter"></input>
+                            <div className='d-flex flex-row'>
+                                <input className='form-control m-2' onChange={this.changeMovieIdFilter} 
+                                    placeholder="Filter"></input>
+                                <button type="button" className='btn mr-1' onClick={()=>this.sortResult('id',true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                    </svg>
+                                </button>
+                                <button type="button" className='btn mr-1' onClick={()=>this.sortResult('id',false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-square" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 9.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+                                    </svg>
+                                </button>
+                            </div>  
                             Movie Id
                         </th>
                         <th>
-                            <input className='form-control m-2' onChange={this.changeMovieNameFilter} 
-                                placeholder="Filter"></input>
+                            <div className='d-flex flex-row'>
+                                <input className='form-control m-2' onChange={this.changeMovieNameFilter} 
+                                    placeholder="Filter"></input>
+                                    <button type="button" className='btn mr-1' onClick={()=>this.sortResult('movieTitle',true)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                        </svg>
+                                    </button>
+                                    <button type="button" className='btn mr-1' onClick={()=>this.sortResult('movieTitle',false)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-square" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 9.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+                                        </svg>
+                                    </button>
+                            </div>
                             Movie Title
                         </th>
                         <th>
