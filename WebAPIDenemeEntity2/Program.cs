@@ -17,6 +17,11 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddMvc(option => option.EnableEndpointRouting = false)
+                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
 var connectionString = builder.Configuration.GetConnectionString("MovieSiteDB");
 builder.Services.AddDbContext<MovieDBContext>(options => options.UseNpgsql(connectionString));
 
