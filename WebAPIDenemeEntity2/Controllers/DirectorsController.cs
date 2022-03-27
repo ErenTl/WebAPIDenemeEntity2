@@ -35,6 +35,12 @@ namespace WebAPIDenemeEntity2.Controllers
         {
             var director = await _context.Directors.FindAsync(id);
 
+            _context.Entry(director)
+                    .Collection(dir => dir.MovieDirectors)
+                    .Query()
+                    .Include(md => md.Movie)
+                    .Load();
+
             if (director == null)
             {
                 return NotFound();
@@ -42,6 +48,8 @@ namespace WebAPIDenemeEntity2.Controllers
 
             return director;
         }
+
+        
 
         // PUT: api/Directors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
