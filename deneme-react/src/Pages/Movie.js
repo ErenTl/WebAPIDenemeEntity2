@@ -330,15 +330,7 @@ export class Movie extends Component{
         return(
             <div>
 
-                        <div className="dropdown">
-                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li>
-                                    <a className="dropdown-item" href="#" >
-                                        deneme
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        
 
             <table className='table table-striped'>
 
