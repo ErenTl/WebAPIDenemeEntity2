@@ -26,8 +26,12 @@ namespace WebAPIDenemeEntity2.Controllers
         public async Task<ActionResult<IEnumerable<Director>>> GetDirectors()
         {
 
-            return await _context.Directors.ToListAsync();
+            return await _context.Directors.OrderBy(dir => dir.Id).ToListAsync();
         }
+
+
+        
+
 
         // GET: api/Directors/5
         [HttpGet("{id}")]
@@ -39,6 +43,7 @@ namespace WebAPIDenemeEntity2.Controllers
                     .Collection(dir => dir.MovieDirectors)
                     .Query()
                     .Include(md => md.Movie)
+                    .OrderBy(md => md.Movie.Id)
                     .Load();
 
             if (director == null)
@@ -83,9 +88,26 @@ namespace WebAPIDenemeEntity2.Controllers
             return NoContent();
         }
 
-        // POST: api/Directors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPut("name/{id}")]
+        public IEnumerable<Director> PutDirectorName(long id, Director client)
+        {
+            using(var context = new MovieDBContext())
+            {
+                Director director = context.Directors.Where(d => d.Id == id).FirstOrDefault();
+
+                director.FirstName = client.FirstName;
+                director.LastName = client.LastName;
+
+                context.SaveChanges();
+
+                return context.Directors.Where(dir => dir.Id == id).ToList();
+
+            }
+        }
+
+            // POST: api/Directors
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPost]
         public async Task<ActionResult<Director>> PostDirector(Director director)
         {
             _context.Directors.Add(director);

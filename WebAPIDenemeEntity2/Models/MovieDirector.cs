@@ -9,7 +9,7 @@ namespace WebAPIDenemeEntity2.Models
         public long MovieId { get; set; }
         public long DirectorId { get; set; }
 
-        public virtual Director Director { get; set; } = null!;
-        public virtual Movie Movie { get; set; } = null!;
+        public virtual Director? Director { get; set; } = null!;
+        public virtual Movie? Movie { get; set; } = null!;
     }
 }
