@@ -33,6 +33,13 @@ create table "movieGenre" (
     "genreId" BIGINT NOT NULL REFERENCES genre(id)
 );
 
+create table "users" (
+    "id" BIGSERIAL NOT NULL PRIMARY KEY,
+    "userName" VARCHAR(100) NOT NULL,
+    "pswSha" VARCHAR(64) NOT NULL,
+    "permission" SMALLINT NOT NULL --1=admin, 2=user
+);
+
 
 
 
