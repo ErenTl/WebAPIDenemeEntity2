@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import {variables} from '../Variables.js';
-
+import {createHash} from 'crypto';
 export class Director extends Component{
 
     constructor(props) {
@@ -31,6 +31,11 @@ export class Director extends Component{
         this.setState({directorNow: {...this.state.directorNow, dateofBirth:e.target.value}});
     }
 
+    hash(string) {
+        return createHash('sha256').update(string).digest('hex');
+    }
+
+
 
     refreshList () {
         console.log("refresh");
@@ -43,6 +48,7 @@ export class Director extends Component{
         .then(data => {
             this.setState({directors:data});
         });
+        console.log(this.hash('foo'));
     }
 
     editClick (dir) {
