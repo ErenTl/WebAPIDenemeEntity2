@@ -21,13 +21,14 @@ namespace WebAPIDenemeEntity2.Models
         public virtual DbSet<Movie> Movies { get; set; } = null!;
         public virtual DbSet<MovieDirector> MovieDirectors { get; set; } = null!;
         public virtual DbSet<MovieGenre> MovieGenres { get; set; } = null!;
+        public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=moviedb;User Id=postgres;Password=dbpass;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseNpgsql("Host=localhost;Database=moviedb;Username=postgres;Password=dbpass");
             }
         }
 
@@ -130,6 +131,23 @@ namespace WebAPIDenemeEntity2.Models
                     .HasForeignKey(d => d.MovieId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("movieGenre_movieId_fkey");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("user");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Permission).HasColumnName("permission");
+
+                entity.Property(e => e.PswSha)
+                    .HasMaxLength(64)
+                    .HasColumnName("pswSha");
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(100)
+                    .HasColumnName("userName");
             });
 
             OnModelCreatingPartial(modelBuilder);
