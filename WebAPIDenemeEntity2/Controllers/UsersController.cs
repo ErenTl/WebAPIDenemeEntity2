@@ -1,11 +1,17 @@
 ﻿#nullable disable
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using WebAPIDenemeEntity2.Models;
 
 namespace WebAPIDenemeEntity2.Controllers
@@ -15,35 +21,19 @@ namespace WebAPIDenemeEntity2.Controllers
     public class UsersController : ControllerBase
     {
         private readonly MovieDBContext _context;
+        private readonly JWTSettings _jwtsettings;
 
-        public UsersController(MovieDBContext context)
+        public UsersController(MovieDBContext context, IOptions<JWTSettings> jwtsettings)
         {
             _context = context;
+            _jwtsettings = jwtsettings.Value;
         }
 
-        // GET: api/Users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            return await _context.Users.ToListAsync();
-        }
-
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(long id)
-        {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
+        
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(long id, User user)
         {
@@ -81,10 +71,49 @@ namespace WebAPIDenemeEntity2.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return CreatedAtAction(nameof(PostUser), new { id = user.Id }, user);
         }
 
+
+        [HttpPost("{login}")]
+        public async Task<ActionResult<UserWithToken>> Login([FromBody] User user)
+        {
+            user = _context.Users.Where(us =>   us.UserName == user.UserName &&
+                                                us.PswSha == user.PswSha).FirstOrDefault();
+
+            UserWithToken userWithToken = new UserWithToken(user);
+
+            if(userWithToken == null) return NotFound();
+
+            //         signing the token
+            //create token handler
+            var tokenHandler = new JwtSecurityTokenHandler();
+            //get the key from appsettings via JWTSettings
+            var key = Encoding.ASCII.GetBytes(_jwtsettings.SecretKey);
+            //writing token's info
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Role, Convert.ToString(user.Permission)),
+                }),
+                Expires = DateTime.UtcNow.AddMonths(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            userWithToken.AccessToken = tokenHandler.WriteToken(token);
+
+            return userWithToken;
+        }
+
+
+
+
         // DELETE: api/Users/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(long id)
         {

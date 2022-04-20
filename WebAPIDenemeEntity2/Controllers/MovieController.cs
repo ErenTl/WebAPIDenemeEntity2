@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -64,7 +65,7 @@ namespace WebAPIDenemeEntity2.Controllers
 
             }
         }
-
+        [Authorize]
         [HttpPut("{id}")]
         public IEnumerable<Movie> Put(long id, Movie client)
         {
@@ -85,7 +86,7 @@ namespace WebAPIDenemeEntity2.Controllers
 
             }
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public IEnumerable<Movie> Delete(long id)
         {
@@ -100,6 +101,7 @@ namespace WebAPIDenemeEntity2.Controllers
             }   
         }
 
+        [Authorize]
         [HttpPost]
         public IEnumerable<Movie> Post(Movie client)
         {
@@ -143,12 +145,6 @@ namespace WebAPIDenemeEntity2.Controllers
                     .Include(md => md.Director)
                     .Load();
             
-            /*var director = await _context.Directors.SingleAsync(d => d.Id == id);
-
-            _context.Entry(director)
-                    .Reference(dir => dir.FirstName)
-                    .Load();*/
-
 
 
             if (movie == null)
@@ -158,81 +154,6 @@ namespace WebAPIDenemeEntity2.Controllers
 
             return movie;
         }
-
-        //update a row
-
-        //Movie movie = context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
-        /*var fullEntries = context.Movies.
-            Join(
-                context.MovieDirectors,
-                MovieDirectors => MovieDirector.MovieId,
-                Movies => Movies.Id,
-                (MovieDirector, Movie) => new { MovieDirector, Movie }
-            ).Where(fullEntries => fullEntries.Movie.Id == id)
-            .Take(10);*/
-
-        /*IQueryable<TableJoinResult> query = (from Movie in context.Set<Movie>()
-                                             join MovieDirector in context.Set<MovieDirector>()
-                                                 on Movie.Id equals MovieDirector.MovieId
-                                             select new TableJoinResult { MovieDirector = MovieDirector, Movie = Movie });*/
-
-        //context.SaveChanges();
-        //var x = query.Where(query => query.Movie.Id == id);
-
-        //get all movies
-        //return context.Movies.Where(mov => mov.Id == id).ToList();
-        /*IQueryable<TableJoinResult> dds = (from Movie in context.Movies
-                join MovieDirector in context.MovieDirectors on Movie.Id equals MovieDirector.MovieId
-                where Movie.Id.Equals(id)
-                select new TableJoinResult { Movie = Movie, MovieDirector = MovieDirector });
-        Console.WriteLine("salam ekmek " + dds);*/
-
-
-
-        /*var dds = from mov in context.Movies
-                                 from movdir in context.MovieDirectors
-                                 from dir in context.Directors
-                                 where mov.Id == movdir.MovieId && movdir.DirectorId == dir.Id
-                                 select new TableJoinResult { Movie = mov, MovieDirector = movdir };
-                                 
-
-                foreach (var item in dds)
-                {
-                    Console.WriteLine(item.Movie.MovieTitle +" salamdýr " + item.MovieDirector.DirectorId + " -- ");
-                }*/
-
-        //var sd= JsonConvert.DeserializeObject<List<TestClass>>(TestObject).AsQueryable();
-
-        /*
-        [HttpPut("{id}")]
-        public IEnumerable<Movie> Put_Movie(long id, Movie client)
-        {
-            using (var context = new MovieDBContext())
-            {
-
-
-                
-
-
-
-
-                //update a row
-                
-                Movie movie = context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
-                movie.MovieTitle = client.MovieTitle;
-
-                context.SaveChanges();
-                
-
-
-                
-
-                //get all movies
-                return context.Movies.ToList();
-
-
-            }
-        }*/
 
     }
 }

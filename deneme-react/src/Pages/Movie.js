@@ -14,13 +14,29 @@ export class Movie extends Component{
             MovieId:0,
 
             directorList:[],
+            directorDirect:[],
 
             MovieIdFilter:"",
             MovieNameFilter:"",
             moviesWithoutFilter:[],
             DropDirectorNameFilter:[],
 
-            mdId:[]
+            mdId:[],
+            loginBool:false
+        }
+    }
+
+
+    componentDidMount() {
+        this.refreshList();
+        this.setLoginBool();
+    }
+
+    setLoginBool() {
+        if(localStorage.getItem('user')!=null)  {
+            this.setState({loginBool:true});
+        }else {
+            this.setState({loginBool:false});
         }
     }
 
@@ -94,6 +110,7 @@ export class Movie extends Component{
         .then(response => response.json())
         .then(data => {
             this.setState({directors:data});
+            this.setState({directorDirect:data.movieDirectors});
             var md_lenth = data.movieDirectors.length;
 
             console.log("length: "+md_lenth);
@@ -121,10 +138,7 @@ export class Movie extends Component{
     }
 
 
-    componentDidMount() {
-        this.refreshList();
-        //this.getDirector((this.state.directorList[0].id));
-    }
+    
 
     changeMovieName =(e)=>{
         this.setState({MovieName:e.target.value});
@@ -202,7 +216,8 @@ export class Movie extends Component{
         var options = {
             method:'POST',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': "Bearer " + JSON.parse(localStorage.getItem('user')).accessToken
             },
             body:JSON.stringify({
                 movieTitle:this.state.MovieName,
@@ -223,7 +238,8 @@ export class Movie extends Component{
             var options_2 = {
                 method:'POST',
                 headers:{
-                    'Content-Type':'application/json'
+                    'Content-Type':'application/json',
+                    'Authorization': "Bearer " + JSON.parse(localStorage.getItem('user')).accessToken
                 },
                 body:JSON.stringify({
                     movieId:result_id,
@@ -248,7 +264,8 @@ export class Movie extends Component{
         var options = {
             method:'PUT',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': "Bearer " + JSON.parse(localStorage.getItem('user')).accessToken
             },
             body:JSON.stringify({
                 movieTitle:this.state.MovieName,
@@ -269,7 +286,8 @@ export class Movie extends Component{
             var options2 = {
                 method:'PUT',
                 headers:{
-                    'Content-Type':'application/json'
+                    'Content-Type':'application/json',
+                    'Authorization': "Bearer " + JSON.parse(localStorage.getItem('user')).accessToken
                 },
                 body:JSON.stringify({
                     movieId:id,
@@ -298,7 +316,10 @@ export class Movie extends Component{
 
     deleteClick(id) {
         var options = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{
+                'Authorization': "Bearer " + JSON.parse(localStorage.getItem('user')).accessToken
+            }
         }
 
         fetch(variables.API_URL+'movie/'+id, options)
@@ -321,7 +342,10 @@ export class Movie extends Component{
             MovieId,
             MovieReleaseDate,
             MovieIMDBRank,
-            directorList
+            directorList,
+            loginBool,
+            directors,
+            directorDirect
         }=this.state;
 
         
@@ -376,15 +400,17 @@ export class Movie extends Component{
                         <th>
                             IMDB Rank
                         </th>
-                        <th>
-                            <div className='d-flex flex-row   '>
-                            <button type="button" className='btn btn-primary m-2 float-end     ' 
-                                data-bs-toggle="modal" data-bs-target="#cuModal"
-                                onClick={()=>this.addClick()}>
-                                    Add Movie
-                            </button>
-                            </div>
-                        </th>
+                        {loginBool==true? 
+                            <th>
+                                <div className='d-flex flex-row   '>
+                                <button type="button" className='btn btn-primary m-2 float-end     ' 
+                                    data-bs-toggle="modal" data-bs-target="#cuModal"
+                                    onClick={()=>this.addClick()}>
+                                        Add Movie
+                                </button>
+                                </div>
+                            </th>
+                        :null}
                     </tr>
                 </thead>
 
@@ -395,6 +421,8 @@ export class Movie extends Component{
                             <td>{mov.movieTitle}</td>
                             <td>{mov.releaseDate}</td>
                             <td className='col-1'>{mov.imdbRank}</td>
+                            {loginBool==true?
+                            <>
                             <td className='col-1'>
                                 <button type="button" className='btn  mr-1' 
                                     data-bs-toggle="modal" data-bs-target="#cuModal"
@@ -416,7 +444,17 @@ export class Movie extends Component{
                                     </svg>
                                 </button>
                             </td>
-                        
+                            </>
+                            :null}
+                            {loginBool==false?
+                                <td className='col-2'>
+                                    <button type="button" className='btn btn-primary float-end'
+                                        data-bs-toggle="modal" data-bs-target="#dirModal"
+                                        onClick={()=>this.getDirector(mov.id)}>
+                                        Görüntüle
+                                    </button>
+                                </td>
+                            :null}
 
                         </tr>
                         )}
@@ -527,6 +565,45 @@ export class Movie extends Component{
                     </div>
                 </div>
             </div>
+
+            <div className='modal fade' id="dirModal" tabIndex="-1" aria-hidden="true">
+                    <div className='modal-dialog modal-lg modal-dialog-centered'>
+                        <div className='modal-content'>
+
+                            <div className='modal-header'>
+                                <h5 className="modal-title">{MovieName}</h5>
+                                <button type='button' className='btn-close' data-bs-dismiss="modal" aria-label='close'></button>
+                            </div>
+
+                            <div className='modal-body'>
+
+
+                                <table className='table table-striped'>
+                                    <thead>
+                                        <tr>
+                                            <th> Director Id </th>
+                                            <th> Director Name </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {(directorDirect).map(dir => 
+                                            
+                                            <tr key={dir.director.id}>
+                                                <td> {dir.director.id} </td>
+                                                <td> {dir.director.firstName}</td>
+                                            </tr>
+                                        )}
+                                        
+                                    </tbody>
+                                </table>
+
+                                
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
             <div className='modal fade' id="deleteModal" tabIndex="-1" aria-hidden="true">
                 <div className='modal-dialog modal-sm modal-dialog-centered'>

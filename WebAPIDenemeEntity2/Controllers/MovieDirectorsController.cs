@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,7 @@ namespace WebAPIDenemeEntity2.Controllers
         }
 
         // PUT: api/MovieDirectors/5
+        [Authorize]
         [HttpPut("{id}")]
         public IEnumerable<MovieDirector> Put(long id, MovieDirector client)
         {
@@ -64,6 +66,7 @@ namespace WebAPIDenemeEntity2.Controllers
 
         // POST: api/MovieDirectors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<MovieDirector>> PostMovieDirector(MovieDirector movieDirector)
         {
@@ -74,6 +77,7 @@ namespace WebAPIDenemeEntity2.Controllers
         }
 
         // DELETE: api/MovieDirectors/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovieDirector(long id)
         {

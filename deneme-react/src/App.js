@@ -17,7 +17,7 @@ function App() {
         <ul className='navbar-nav'>
           <li className='nav-item- m-1'>
             <NavLink className='btn btn-light btn-outline-primary' to='/home'>
-              Home
+              Home (Log In / Log Out)
             </NavLink>
           </li>
         </ul>
