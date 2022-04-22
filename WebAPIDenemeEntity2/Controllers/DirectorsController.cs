@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using WebAPIDenemeEntity2.Models;
 
 namespace WebAPIDenemeEntity2.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class DirectorsController : ControllerBase
@@ -58,6 +60,7 @@ namespace WebAPIDenemeEntity2.Controllers
 
         // PUT: api/Directors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDirector(long id, Director director)
         {
@@ -88,6 +91,7 @@ namespace WebAPIDenemeEntity2.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpPut("name/{id}")]
         public IEnumerable<Director> PutDirectorName(long id, Director client)
         {
@@ -105,18 +109,20 @@ namespace WebAPIDenemeEntity2.Controllers
             }
         }
 
-            // POST: api/Directors
-            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPost]
+        // POST: api/Directors
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
+        [HttpPost]
         public async Task<ActionResult<Director>> PostDirector(Director director)
         {
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDirector", new { id = director.Id }, director);
+            return CreatedAtAction(nameof(PostDirector), new { id = director.Id }, director);
         }
 
         // DELETE: api/Directors/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDirector(long id)
         {

@@ -21,6 +21,7 @@ namespace WebAPIDenemeEntity2.Models
         public virtual DbSet<Movie> Movies { get; set; } = null!;
         public virtual DbSet<MovieDirector> MovieDirectors { get; set; } = null!;
         public virtual DbSet<MovieGenre> MovieGenres { get; set; } = null!;
+        public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -130,6 +131,23 @@ namespace WebAPIDenemeEntity2.Models
                     .HasForeignKey(d => d.MovieId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("movieGenre_movieId_fkey");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("user");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Permission).HasColumnName("permission");
+
+                entity.Property(e => e.PswSha)
+                    .HasMaxLength(64)
+                    .HasColumnName("pswSha");
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(100)
+                    .HasColumnName("userName");
             });
 
             OnModelCreatingPartial(modelBuilder);

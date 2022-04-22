@@ -11,12 +11,22 @@ export class Director extends Component{
             dirMov:[],
             directorName:"",
 
-            directorNow:[]
+            directorNow:[],
+            loginBool:false
         }
     }
 
     componentDidMount() {
         this.refreshList();
+        this.setLoginBool();
+    }
+
+    setLoginBool() {
+        if(localStorage.getItem('user')!=null)  {
+            this.setState({loginBool:true});
+        }else {
+            this.setState({loginBool:false});
+        }
     }
 
     changeDirectorFirstName = (e) => {
@@ -90,14 +100,15 @@ export class Director extends Component{
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer " + JSON.parse(localStorage.getItem('user')).accessToken
             },
             body: JSON.stringify(this.state.directorNow)
         }
         fetch(variables.API_URL+'directors/'+id, options)
         .then(res=>res.json())
         .then((result)=>{
-            alert("result: " + result);
+            alert("Düzenleme Başarılı ");
             this.refreshList();
         }, (error)=>{
             this.refreshList();
@@ -110,14 +121,15 @@ export class Director extends Component{
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer " + JSON.parse(localStorage.getItem('user')).accessToken
             },
             body: JSON.stringify(this.state.directorNow)
         }
         fetch(variables.API_URL+'directors/', options)
         .then(res=>res.json())
         .then((result)=>{
-            alert("result: " + result);
+            alert("Yönetmen ekleme başarılı" );
             this.refreshList();
         }, (error)=>{
             this.refreshList();
@@ -129,7 +141,8 @@ export class Director extends Component{
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer " + JSON.parse(localStorage.getItem('user')).accessToken
             }
         }
 
@@ -137,8 +150,8 @@ export class Director extends Component{
         .then(res=>res.json())
         .then((result)=>{
             this.refreshList();
+            alert("Silme işlemi başarılı.");
         }, (error)=>{
-            console.log("error: " + error);
             this.refreshList();
         });
 
@@ -152,7 +165,8 @@ export class Director extends Component{
             dirMov,
             directorName,
             directorNow,
-            modalTitle
+            modalTitle,
+            loginBool
         }=this.state;
 
         return(
@@ -163,6 +177,7 @@ export class Director extends Component{
                         <tr>
                             <th> Directosr Id </th>
                             <th> Director Name </th>
+                            {loginBool==true? 
                             <th>
                                 <div className='d-flex flex-row   '>
                                     <button type="button" className='btn btn-primary m-2 float-end     ' 
@@ -172,6 +187,7 @@ export class Director extends Component{
                                     </button>
                                 </div>
                             </th>
+                            :null}
                         </tr>
                     </thead>
 
@@ -181,6 +197,7 @@ export class Director extends Component{
                             <tr key={dir.id}>
                                 <td cl> {dir.id} </td>
                                 <td> {dir.firstName} {dir.lastName}</td>
+                                {loginBool==true?
                                 <td className='col-1'>
                                     <button type="button" className='btn  mr-1' 
                                         data-bs-toggle="modal" data-bs-target="#cuModal"
@@ -192,6 +209,7 @@ export class Director extends Component{
                                         </svg>
                                     </button>
                                 </td>
+                                :null}
                                 <td className='col-2'>
                                     <button type="button" className='btn btn-primary float-end'
                                         data-bs-toggle="modal" data-bs-target="#movModal"
@@ -200,6 +218,7 @@ export class Director extends Component{
                                         Görüntüle
                                     </button>
                                 </td>
+                                {loginBool==true?
                                 <td className='col-1'>
                                     <button type="button" className='btn  mr-1'
                                         data-bs-toggle="modal" data-bs-target="#cuModal" onClick={() => this.deleteClick(dir)}>
@@ -209,6 +228,7 @@ export class Director extends Component{
                                             </svg>
                                     </button>
                                 </td>
+                                :null}
                             </tr>
 
                         )}

@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WebAPIDenemeEntity2.Models;
 
 
@@ -25,8 +28,34 @@ builder.Services.AddMvc(option => option.EnableEndpointRouting = false)
 var connectionString = builder.Configuration.GetConnectionString("MovieSiteDB");
 builder.Services.AddDbContext<MovieDBContext>(options => options.UseNpgsql(connectionString));
 
+var jwtSection = builder.Configuration.GetSection("JWTSettings");
+builder.Services.Configure<JWTSettings>(jwtSection);
+
+//to validate the token which has been sent by clients
+var appSettings = jwtSection.Get<JWTSettings>();
+var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
+
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+          .AddJwtBearer(x =>
+          {
+              x.RequireHttpsMetadata = true;
+              x.SaveToken = true;
+              x.TokenValidationParameters = new TokenValidationParameters
+              {
+                  ValidateIssuerSigningKey = true,
+                  IssuerSigningKey = new SymmetricSecurityKey(key),
+                  ValidateIssuer = false,
+                  ValidateAudience = false,
+                  ClockSkew = TimeSpan.Zero
+              };
+          });
+
 //builder.Services.AddControllers(
-  //  options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+//  options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 
 var app = builder.Build();
 
@@ -42,6 +71,7 @@ app.UseHttpsRedirection();
 
 app.UseCors();
 
+app.UseAuthentication();
 
 app.UseAuthorization();
 
