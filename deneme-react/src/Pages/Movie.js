@@ -229,6 +229,7 @@ export class Movie extends Component{
         .then(res=>res.json())
         .then((res)=>{
             result_id = res[0].id;
+            alert("Movie added successfully");
             this.refreshList();
         }, (error)=>{
             alert(error);
@@ -249,7 +250,6 @@ export class Movie extends Component{
             fetch(variables.API_URL+'MovieDirectors/', options_2 )
             .then(res=>res.json())
             .then((result)=>{
-                alert(result);
                 this.refreshList();
             }, (error)=>{
                 alert(error);
@@ -277,7 +277,7 @@ export class Movie extends Component{
         fetch(variables.API_URL+'movie/'+id, options)
         .then(res=>res.json())
         .then((result)=>{
-            alert(result);
+            alert("Film başarıyla güncellendi");
         }, (error)=>{
             alert(error);
         });
@@ -298,7 +298,6 @@ export class Movie extends Component{
             fetch(variables.API_URL+'MovieDirectors/'+this.state.mdId[md], options2)
             .then(res=>res.json())
             .then((result)=> {
-                alert(result);
                 this.refreshList();
             }, (error) => {
                 alert(error);
@@ -325,7 +324,7 @@ export class Movie extends Component{
         fetch(variables.API_URL+'movie/'+id, options)
         .then(res=>res.json())
         .then((result)=>{
-            alert(result);
+            alert("Silme işlemi başarılı");
             this.refreshList();
         }, (error)=>{
             alert(error);
@@ -591,7 +590,7 @@ export class Movie extends Component{
                                             
                                             <tr key={dir.director.id}>
                                                 <td> {dir.director.id} </td>
-                                                <td> {dir.director.firstName}</td>
+                                                <td> {dir.director.firstName} {dir.director.lastName}</td>
                                             </tr>
                                         )}
                                         

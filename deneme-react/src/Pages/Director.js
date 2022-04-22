@@ -108,7 +108,7 @@ export class Director extends Component{
         fetch(variables.API_URL+'directors/'+id, options)
         .then(res=>res.json())
         .then((result)=>{
-            alert("result: " + result);
+            alert("Düzenleme Başarılı ");
             this.refreshList();
         }, (error)=>{
             this.refreshList();
@@ -129,7 +129,7 @@ export class Director extends Component{
         fetch(variables.API_URL+'directors/', options)
         .then(res=>res.json())
         .then((result)=>{
-            alert("result: " + result);
+            alert("Yönetmen ekleme başarılı" );
             this.refreshList();
         }, (error)=>{
             this.refreshList();
@@ -150,8 +150,8 @@ export class Director extends Component{
         .then(res=>res.json())
         .then((result)=>{
             this.refreshList();
+            alert("Silme işlemi başarılı.");
         }, (error)=>{
-            console.log("error: " + error);
             this.refreshList();
         });
 
