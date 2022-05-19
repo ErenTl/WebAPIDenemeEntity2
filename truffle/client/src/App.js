@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import MovieRankFactoryContract from "./contracts/MovieRankFactory.json";
+import MovieRankContract from "./contracts/MovieRank.json";
 import getWeb3 from "./getWeb3";
 import {Home} from "./Pages/Home";
 import {Movie} from './Pages/Movie';
@@ -10,10 +10,10 @@ import {BrowserRouter, Route, Routes, NavLink} from 'react-router-dom';
 import "./App.css";
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  //state = { storageValue: 0, web3: null, accounts: null, contract: null, contract2:null, response:0 };
 
   componentDidMount = async () => {
-    try {
+    /*try {
       // Get network provider and web3 instance.
       console.log("waiting web3");
       const web3 = await getWeb3();
@@ -23,17 +23,24 @@ class App extends Component {
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = MovieRankFactoryContract.networks[networkId];
-      console.log("deployed Network:. " + deployedNetwork.address);
+
+      /*const deployedNetwork = MovieRankFactoryContract.networks[networkId];
       const instance = new web3.eth.Contract(
         MovieRankFactoryContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
 
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
-      var res = await this.state.contract.methods.mrfAverageRank(5).call();
+      const deployedNetwork2 = MovieRankContract.networks[networkId];
+      const instance2 = new web3.eth.Contract(
+        MovieRankContract.abi,
+        deployedNetwork2 && deployedNetwork2.address,
+      );
+
+      // Set web3, accounts, and contract to the state, and then pr
+      this.setState({web3, accounts, contract2:instance2}, this.runExample);
+      //this.setState({ web3, accounts, contract: instance }, this.runExample);
+      //var res = await this.state.contract.methods.mrfAverageRank(5).call();
+      var res = await this.state.contract2.methods.averageRank().call();
       console.log("res: " + res);
       this.setState({ storageValue: res });
     } catch (error) {
@@ -42,28 +49,34 @@ class App extends Component {
         `Failed to load web3, accounts, or contract. Check console for details.`,
       );
       console.error(error);
-    }
+    }*/
   };
 
-  runExample = async () => {
-    const { accounts, contract } = this.state;
+  /*runExample = async () => {
+    const { accounts, contract, contract2, response } = this.state;
 
     // Stores a given value, 5 by default.
     console.log("runExample");
+    
+    console.log("list:");
+    //var sd = await contract.methods.mrfAverageRank(5).call();
+    //console.log(sd);
     console.log(accounts[0]);
-    await contract.methods.mrfVote(5,8).send({ from: accounts[0] , gas:300000000 });
+    //await contract2.methods.newRanking(4).send({ from:accounts[0] });
     console.log("runExample done");
     // Get the value from the contract to prove it worked.
-    const response = await contract.methods.mrfAverageRank(5).call();
+    //response = await contract2.methods.averageRank().call();
 
     // Update state with the result.
     this.setState({ storageValue: response });
-  };
+  };*/
 
   render() {
+    
+    /*const { accounts, contract, contract2} = this.state;
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
-    }
+    }*/
     return (
       <>
       <BrowserRouter>
@@ -84,7 +97,13 @@ class App extends Component {
 
         <ul className='navbar-nav'>
           <li className='nav-item- m-1'>
-            <NavLink className='btn btn-light btn-outline-primary' to='/movie'>
+            <NavLink className='btn btn-light btn-outline-primary'  
+              to={{
+                pathname:"/movie",
+                state:{
+                  deneme:"hadi olll"
+                }
+              }}end>
               Movie
             </NavLink>
           </li>
@@ -92,7 +111,7 @@ class App extends Component {
 
         <ul className='navbar-nav'>
           <li className='nav-item- m-1'>
-            <NavLink className='btn btn-light btn-outline-primary' to='/director'>
+            <NavLink className='btn btn-light btn-outline-primary'  to='/director'>
               Director
             </NavLink>
           </li>
@@ -102,8 +121,8 @@ class App extends Component {
       </nav>
 
       <Routes>
-          <Route path="/home" element={<Home />} />
-          <Route path="/movie" element={<Movie />} />
+          <Route path="/home"  element={<Home />} />
+          <Route end path="/movie" deneme="olsana" element={<Movie />} />
           <Route path="/director" element={<Director />} />
       </Routes>
       
@@ -120,7 +139,14 @@ class App extends Component {
         <p>
           Try changing the value stored on <strong>line 42</strong> of App.js.
         </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        <div>The stored value is: {/*this.state.storageValue*/}</div>
+        <button type="button" className='btn btn-primary m-2 float-end' onClick={()=>{
+          //contract2.methods.newRanking(2).send({ from:accounts[0] });
+        }}>Send</button> 
+        <button type="button" className='btn btn-primary m-2 float-end' onClick={()=>{
+          //var temp = this.state.contract2.methods.averageRank().call();
+          //console.log(temp);
+        }}>Call</button> 
       </div>
       </>
     );

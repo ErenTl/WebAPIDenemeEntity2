@@ -1,11 +1,17 @@
 import React,{Component} from 'react';
 import { mockComponent } from 'react-dom/test-utils';
 import {variables} from '../Variables.js';
+import { useLocation} from "react-router-dom"
+
+import getWeb3 from "../getWeb3";
+import MovieRankFactoryContract from "../contracts/MovieRankFactory.json";
+import MovieRankContract from "../contracts/MovieRank.json";
 
 export class Movie extends Component{
 
     constructor(props) {
         super(props);
+
 
         this.state={
             movies:[],
@@ -22,15 +28,103 @@ export class Movie extends Component{
             DropDirectorNameFilter:[],
 
             mdId:[],
-            loginBool:false
+            loginBool:false,
+
+            web3bool:false,
+            web3:null,
+            accounts:null,
+            mrfContract:null,
+            networkId:null,
+
+            bcMovieIdList:[],
+            bcMovieRankList:[],
+            BCMovieRank:0,
+            mrContract:null,
+            bcVoteBool:false,
+            bcRankNow:0
+
+
         }
     }
 
 
-    componentDidMount() {
+    async componentDidMount() {
+
+        try{
+            // Get network provider and web3 instance.
+            const web3 = await getWeb3();
+
+            // Use web3 to get the user's accounts.
+            const accounts = await web3.eth.getAccounts();
+
+            // Get the contract instance.
+            const networkId = await web3.eth.net.getId();
+
+            const mrfDeployedNetwork = MovieRankFactoryContract.networks[networkId];
+            const mrfInstance = new web3.eth.Contract(MovieRankFactoryContract.abi,
+                mrfDeployedNetwork && mrfDeployedNetwork.address);
+
+            // Set web3, accounts, and contract to the state
+            this.setState({networkId:networkId, web3, accounts, mrfContract: mrfInstance, web3bool:true });
+        }catch(e){
+            alert(
+                `Failed to load web3, accounts, or contract. Check console for details.`,
+              );
+        }
+
+
         this.refreshList();
         this.setLoginBool();
+        this.getBCMovieIdList();
+        this.bcGetAllRanks();
+        
     }
+
+    async getBCMovieIdList() {
+        var temp = await this.state.mrfContract.methods.getMovieIdList().call();
+        this.setState({bcMovieIdList:temp});
+    }
+
+    async bcCreateMRContract(mov) {
+        await this.state.mrfContract.methods.createMovieRankContract(mov.id).send({from:this.state.accounts[0],gas:3000000});
+        window.location.reload(false);
+    }
+
+    async bcMovieVoteClick(id) {
+        //filmin id si ile filmin kontratının adresini factory kontratından çekiyoruz
+        var address = await this.state.mrfContract.methods.getMovieRank(id).call();
+
+        //filmin kontratını tanımlıyoruz ve state'imize aktarıyoruz
+        var tempContract = new this.state.web3.eth.Contract(MovieRankContract.abi, address);
+        this.setState({mrContract:tempContract});
+
+        //kontratta oy kullanmış cüzdan adreslerini çekiyoruz
+        var addressList = await tempContract.methods.getRankingAddressList().call();
+
+        var rank = await tempContract.methods.averageRank().call();
+        this.setState({bcRankNow:rank});
+
+        if(addressList.includes(this.state.accounts[0])){
+            this.setState({bcVoteBool:true});
+        }else{
+            this.setState({bcVoteBool:false});
+        }
+    }
+
+    async bcMovieVote(id) {
+        
+
+        await this.state.mrContract.methods.newRanking(this.state.BCMovieRank).send({from:this.state.accounts[0],gas:3000000});
+        await console.log(this.state.mrContract.methods.averageRank().call());
+
+    }
+
+    async bcGetAllRanks() {
+        var bcMovieRankList = await this.state.mrfContract.methods.getAllAverageRank().call();
+        this.setState({bcMovieRankList:bcMovieRankList});
+    }
+
+    
 
     setLoginBool() {
         if(localStorage.getItem('user')!=null)  {
@@ -151,6 +245,9 @@ export class Movie extends Component{
     changeMovieImdbRank =(e)=>{
         this.setState({MovieIMDBRank:e.target.value});
     }
+    changeBCMovieRank = (e) => {
+        this.setState({BCMovieRank:e.target.value});
+    }
 
     addClick() {
         console.log("addclick");
@@ -258,6 +355,8 @@ export class Movie extends Component{
 
     }
 
+    
+
 
     //updates movie with put movie and directors -- bugs in director section will be fixed.
     updateClick(id) {
@@ -344,7 +443,12 @@ export class Movie extends Component{
             directorList,
             loginBool,
             directors,
-            directorDirect
+            directorDirect,
+            BCMovieRank,
+            bcVoteBool,
+            bcRankNow,
+            bcMovieIdList,
+            bcMovieRankList
         }=this.state;
 
         
@@ -399,6 +503,9 @@ export class Movie extends Component{
                         <th>
                             IMDB Rank
                         </th>
+                        <th>
+                            Blockchain Rank
+                        </th>
                         {loginBool==true? 
                             <th>
                                 <div className='d-flex flex-row   '>
@@ -420,6 +527,35 @@ export class Movie extends Component{
                             <td>{mov.movieTitle}</td>
                             <td>{mov.releaseDate}</td>
                             <td className='col-1'>{mov.imdbRank}</td>
+                            <td className='col-1'>{bcMovieIdList.includes((mov.id).toString())? 
+                                bcMovieRankList[bcMovieIdList.indexOf((mov.id).toString())]
+                            :null}</td>
+                            <td className='col-1'>
+                                {/* Eğer Filmin MovieRank kontratı oluşturulmuşsa: */}
+                                {bcMovieIdList.includes((mov.id).toString())? 
+                                    <button type="button" className='btn  mr-1' 
+                                    data-bs-toggle="modal" data-bs-target="#voteModal"
+                                    onClick={()=>{
+                                        this.editClick(mov);
+                                        this.bcMovieVoteClick(mov.id);
+                                        }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-123" viewBox="0 0 16 16">
+                                        <path d="M2.873 11.297V4.142H1.699L0 5.379v1.137l1.64-1.18h.06v5.961h1.174Zm3.213-5.09v-.063c0-.618.44-1.169 1.196-1.169.676 0 1.174.44 1.174 1.106 0 .624-.42 1.101-.807 1.526L4.99 10.553v.744h4.78v-.99H6.643v-.069L8.41 8.252c.65-.724 1.237-1.332 1.237-2.27C9.646 4.849 8.723 4 7.308 4c-1.573 0-2.36 1.064-2.36 2.15v.057h1.138Zm6.559 1.883h.786c.823 0 1.374.481 1.379 1.179.01.707-.55 1.216-1.421 1.21-.77-.005-1.326-.419-1.379-.953h-1.095c.042 1.053.938 1.918 2.464 1.918 1.478 0 2.642-.839 2.62-2.144-.02-1.143-.922-1.651-1.551-1.714v-.063c.535-.09 1.347-.66 1.326-1.678-.026-1.053-.933-1.855-2.359-1.845-1.5.005-2.317.88-2.348 1.898h1.116c.032-.498.498-.944 1.206-.944.703 0 1.206.435 1.206 1.07.005.64-.504 1.106-1.2 1.106h-.75v.96Z"/>
+                                    </svg>
+                                </button>
+                                :null}
+
+                                {/* Eğer Filmin MovieRank kontratı oluşturulmamışsa ve admin girişi yapılmışsa kontrat oluşturmak için: */}
+                                {!(bcMovieIdList.includes((mov.id).toString()))&&loginBool==true? 
+                                    <button type="button" className='btn  mr-1'
+                                        onClick={()=>this.bcCreateMRContract(mov)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                                        </svg>
+                                    </button>
+                                :null}
+                                
+                            </td>
                             {loginBool==true?
                             <>
                             <td className='col-1'>
@@ -618,6 +754,44 @@ export class Movie extends Component{
                         <div className='modal-body'>
                             <button type='button' className='btn btn-primary float-start' onClick={()=>this.deleteClick(MovieId)}>
                                     Delete</button>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className='modal fade' id="voteModal" tabIndex="-1" aria-hidden="true">
+            <div className='modal-dialog modal-sm modal-dialog-centered'>
+                    <div className='modal-content'>
+                        <div className='modal-header'>
+                            <div className="row justify-content-center">
+                                <h5 className='modal-title'>
+                                    Vote {MovieName} Rank: {bcRankNow}
+                                </h5>
+                            </div>
+                            <button type='button' className='btn-close' data-bs-dismiss="modal" aria-label="close"></button>
+                        </div>
+
+
+                        <div className='modal-body'>
+                            <div className='input-group mb-3'>
+                                <span className='input-group-text'>Rank: [1-10]</span>
+                                <input type="text" className='form-control'
+                                value={BCMovieRank}
+                                onChange={this.changeBCMovieRank}></input>
+                            </div>
+                            {bcVoteBool==false?
+                                <button type='button' className='btn btn-primary float-start' onClick={()=>this.bcMovieVote(MovieId)}>
+                                    Vote 
+                                </button>  
+                            :null}  
+
+                            {bcVoteBool==true? 
+                                <button type='button' className='btn btn-danger float-start' disabled>
+                                    You can not vote film which you have already voted
+                                </button> 
+                            :null}            
+                            
+                                            
                         </div>
                     </div>
                 </div>
