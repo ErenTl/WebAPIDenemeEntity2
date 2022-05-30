@@ -84,6 +84,26 @@ namespace Nunit.WebAPIDenemeEntity2.Test
         }
 
 
+        //do single
+        [Test]
+        public void Directors_Controller_PostDirector_Test()
+        {
+            //var directorsController = new DirectorsController(_context);
+            var directorsController = new DirectorsController(_context);
+            var director = new Director();
+            director.FirstName = "isims";
+            director.LastName = "soyisin";
+            director.Sex = 1;
+            director.DateOfBirth = DateTime.UtcNow;
+
+            var res = directorsController.PostDirector(director);
+
+
+            Console.WriteLine(directorsController.GetDirectors().Result.Value.Where(dir => director.DateOfBirth == dir.DateOfBirth).FirstOrDefault().Id);
+            //dateofbirth post metodunun yapýldýðý tarih olduðu için bu þekilde veriyi geri çekiyoruz.
+            Assert.AreEqual(director.Id,
+                directorsController.GetDirectors().Result.Value.Where(dir => director.DateOfBirth == dir.DateOfBirth).FirstOrDefault().Id);
+        }
 
     }
 }
