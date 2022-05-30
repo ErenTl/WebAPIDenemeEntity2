@@ -74,5 +74,16 @@ namespace Nunit.WebAPIDenemeEntity2.Test
 
 
 
+        [Test]
+        public void Directors_Controller_GetDirector_1_Test()
+        {
+            var directorsController = new DirectorsController(_context);
+            var firstName = directorsController.GetDirector(1).Result.Value.FirstName;
+            Console.WriteLine(firstName);
+            Assert.AreEqual("Eren", firstName);
+        }
+
+
+
     }
 }
