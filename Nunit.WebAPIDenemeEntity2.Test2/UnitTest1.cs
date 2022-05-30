@@ -105,5 +105,16 @@ namespace Nunit.WebAPIDenemeEntity2.Test
                 directorsController.GetDirectors().Result.Value.Where(dir => director.DateOfBirth == dir.DateOfBirth).FirstOrDefault().Id);
         }
 
+        [Test]
+        public void Users_Controller_Login_Access_Token_Test()
+        {
+            var usersController = new UsersController(_context, _jwtsettingsIO);
+            var user1 = _context.Users.FirstOrDefault();
+
+            var userKey = usersController.Login(user1);
+            Console.WriteLine(userKey.Result.Value.AccessToken);
+            Assert.IsNotEmpty(userKey.Result.Value.AccessToken);
+        }
+
     }
 }
