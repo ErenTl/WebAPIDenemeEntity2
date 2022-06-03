@@ -87,7 +87,7 @@ namespace Nunit.WebAPIDenemeEntity2.Test
 
         //do single
         [Test]
-        public void Directors_Controller_PostDirector_Test()
+        public async Task Directors_Controller_PostDirector_Test()
         {
             //var directorsController = new DirectorsController(_context);
             var directorsController = new DirectorsController(_context);
@@ -97,7 +97,7 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             director.Sex = 1;
             director.DateOfBirth = DateTime.UtcNow;
 
-            var res = directorsController.PostDirector(director);
+            var res = await directorsController.PostDirector(director);
 
 
             Console.WriteLine(directorsController.GetDirectors().Result.Value.Where(dir => director.DateOfBirth == dir.DateOfBirth).FirstOrDefault().Id);
