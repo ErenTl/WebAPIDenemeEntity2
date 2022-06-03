@@ -62,7 +62,7 @@ namespace WebAPIDenemeEntity2.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDirector(long id, Director director)
+        public ActionResult<IEnumerable<Director>> PutDirector(long id, Director director)
         {
             if (id != director.Id)
             {
@@ -74,7 +74,7 @@ namespace WebAPIDenemeEntity2.Controllers
             try
             {
 
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -88,7 +88,7 @@ namespace WebAPIDenemeEntity2.Controllers
                 }
             }
 
-            return NoContent();
+            return _context.Directors.Where(dir => dir.Id == id).ToList();
         }
 
         [Authorize]
