@@ -61,19 +61,16 @@ namespace WebAPIDenemeEntity2.Controllers
         [HttpPost]
         public IEnumerable<Movie> Post(Movie client)
         {
-            using (var context = new MovieDBContext())
-            {
-                Movie movie = new Movie();
-                movie.MovieTitle = client.MovieTitle;
-                //movie.ReleaseDate = DateTime.SpecifyKind(new DateTime(2001, 3, 28), DateTimeKind.Utc);
-                movie.ReleaseDate= client.ReleaseDate;
-                movie.ImdbRank = (decimal?)client.ImdbRank;
-                context.Movies.Add(movie);
+            Movie movie = new Movie();
 
-                context.SaveChanges();
+            movie.MovieTitle = client.MovieTitle;
+            movie.ReleaseDate = client.ReleaseDate;
+            movie.ImdbRank = (decimal?)client.ImdbRank;
 
-                return context.Movies.Where(mov => mov.Id == movie.Id).ToList();
-            }
+            _context.Movies.Add(movie);
+            _context.SaveChanges();
+
+            return _context.Movies.Where(mov => mov.Id == movie.Id).ToList();
         }
 
 
