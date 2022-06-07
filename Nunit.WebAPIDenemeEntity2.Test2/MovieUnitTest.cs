@@ -72,5 +72,15 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Console.WriteLine("created movie where id: " + movieCreated.FirstOrDefault().Id);
             Assert.AreEqual(movie.ReleaseDate, movieCreated.FirstOrDefault().ReleaseDate);
         }
+
+        [Test]
+        public void Movie_Controller_GetMovieDetails_Test()
+        {
+            var movie = _movieController.Get().FirstOrDefault();
+            var movieDetails = _movieController.GetMovieDetails(movie.Id);
+
+            Console.WriteLine("get movie details where id: " + movieDetails.Id);
+            Assert.AreEqual(movie.Id, movieDetails.Id);
+        }
     }
 }
