@@ -95,18 +95,17 @@ namespace WebAPIDenemeEntity2.Controllers
         [HttpPut("name/{id}")]
         public IEnumerable<Director> PutDirectorName(long id, Director client)
         {
-            using(var context = new MovieDBContext())
-            {
-                Director director = context.Directors.Where(d => d.Id == id).FirstOrDefault();
+            
+                Director director = _context.Directors.Where(d => d.Id == id).FirstOrDefault();
 
                 director.FirstName = client.FirstName;
                 director.LastName = client.LastName;
 
-                context.SaveChanges();
+                _context.SaveChanges();
 
-                return context.Directors.Where(dir => dir.Id == id).ToList();
+                return _context.Directors.Where(dir => dir.Id == id).ToList();
 
-            }
+            
         }
 
         // POST: api/Directors
