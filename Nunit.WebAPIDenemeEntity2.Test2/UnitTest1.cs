@@ -137,6 +137,19 @@ namespace Nunit.WebAPIDenemeEntity2.Test
         }
         
         [Test]
+        public async Task Directors_Controller_DeleteDirector_Test()
+        {
+            var directorsController = new DirectorsController(_context);
+            var director = directorsController.GetDirectors().Result.Value.LastOrDefault();
+
+            await directorsController.DeleteDirector((long)director.Id);
+
+            bool exist = directorsController.DirectorExists((long)director.Id);
+
+            Assert.IsFalse(exist);
+        }
+
+        [Test]
         public void Users_Controller_Login_Access_Token_Test()
         {
             var usersController = new UsersController(_context, _jwtsettingsIO);
