@@ -44,19 +44,17 @@ namespace WebAPIDenemeEntity2.Controllers
             //get the movie
             return _context.Movies.Where(mov => mov.Id == id).ToList();
         }
+
         [Authorize]
         [HttpDelete("{id}")]
         public IEnumerable<Movie> Delete(long id)
         {
-            using (var context = new MovieDBContext())
-            {
-                Movie movie = context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
-                context.Movies.Remove(movie);
+            Movie movie = _context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
+            _context.Movies.Remove(movie);
 
-                context.SaveChanges();
+            _context.SaveChanges();
 
-                return context.Movies.OrderBy(x => x.Id).ToList();
-            }   
+            return _context.Movies.OrderBy(x => x.Id).ToList();
         }
 
         [Authorize]
