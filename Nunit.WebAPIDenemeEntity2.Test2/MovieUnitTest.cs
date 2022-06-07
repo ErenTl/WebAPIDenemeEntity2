@@ -47,5 +47,17 @@ namespace Nunit.WebAPIDenemeEntity2.Test
 
             Assert.AreEqual(movie.ReleaseDate, movieChanged.FirstOrDefault().ReleaseDate);
         }
+
+        [Test]
+        public void Movie_Controller_Delete_Test()
+        {
+            var movie = _movieController.Get().LastOrDefault();
+            _movieController.Delete(movie.Id);
+            bool exist = _context.Movies.Any(e => e.Id == movie.Id);
+
+            Console.WriteLine("deleted movie where id: " + movie.Id);
+            Assert.IsFalse(exist);
+        }
+
     }
 }
