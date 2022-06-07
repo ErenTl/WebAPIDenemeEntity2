@@ -37,5 +37,15 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Assert.IsNotNull(movie);
         }
 
+        [Test]
+        public void Movie_Controller_Put_Test()
+        {
+            var movie = _movieController.Get().FirstOrDefault();
+            movie.ReleaseDate = DateTime.UtcNow;
+
+            var movieChanged = _movieController.Put(movie.Id, movie);
+
+            Assert.AreEqual(movie.ReleaseDate, movieChanged.FirstOrDefault().ReleaseDate);
+        }
     }
 }
