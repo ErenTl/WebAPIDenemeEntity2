@@ -33,22 +33,16 @@ namespace WebAPIDenemeEntity2.Controllers
         [HttpPut("{id}")]
         public IEnumerable<Movie> Put(long id, Movie client)
         {
-            using (var context = new MovieDBContext())
-            {
-                //update a row
+            //update a row
+            Movie movie = _context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
+            movie.MovieTitle = client.MovieTitle;
+            movie.ReleaseDate = client.ReleaseDate;
+            movie.ImdbRank = client.ImdbRank;
 
-                Movie movie = context.Movies.Where(mov => mov.Id == id).FirstOrDefault();
-                movie.MovieTitle = client.MovieTitle;
-                movie.ReleaseDate = client.ReleaseDate;
-                movie.ImdbRank= client.ImdbRank;
+            _context.SaveChanges();
 
-                context.SaveChanges();
-
-                //get all movies
-                return context.Movies.Where(mov=>mov.Id == id).ToList();
-
-
-            }
+            //get the movie
+            return _context.Movies.Where(mov => mov.Id == id).ToList();
         }
         [Authorize]
         [HttpDelete("{id}")]
