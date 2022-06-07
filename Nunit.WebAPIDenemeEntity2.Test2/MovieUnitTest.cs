@@ -29,6 +29,13 @@ namespace Nunit.WebAPIDenemeEntity2.Test
 
         }
 
+        [Test]
+        public async Task Movie_Controller_Get_Test()
+        {
+            var movie = _movieController.Get().FirstOrDefault();
+            Console.WriteLine("id: " + movie.Id + "  |title: " + movie.MovieTitle);
+            Assert.IsNotNull(movie);
+        }
 
     }
 }
