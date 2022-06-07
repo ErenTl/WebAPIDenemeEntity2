@@ -59,5 +59,18 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Assert.IsFalse(exist);
         }
 
+        [Test]
+        public void Movie_Controller_Post_Test()
+        {
+            var movie = new Movie();
+            movie.MovieTitle = "Nunit Test Title";
+            movie.ReleaseDate = DateTime.UtcNow;
+            movie.ImdbRank = 1;
+
+            var movieCreated = _movieController.Post(movie);
+
+            Console.WriteLine("created movie where id: " + movieCreated.FirstOrDefault().Id);
+            Assert.AreEqual(movie.ReleaseDate, movieCreated.FirstOrDefault().ReleaseDate);
+        }
     }
 }
