@@ -26,45 +26,9 @@ namespace WebAPIDenemeEntity2.Controllers
         [HttpGet]
         public IEnumerable<Movie> Get()
         {
-            using(var context = new MovieDBContext())
-            {
-                
-                
-                //add a movie
-                /*
-                Movie movie = new Movie();
-                movie.MovieTitle = "Dogum Gunu";
-                movie.ReleaseDate = DateTime.SpecifyKind(new DateTime(2001,3,28), DateTimeKind.Utc);
-                movie.ImdbRank = (decimal?)2.1;
-
-                context.Movies.Add(movie);
-
-                context.SaveChanges();
-                
-                */
-
-
-                //update a row
-                
-                
-
-
-                //remove movie
-                /*
-                Movie movie = context.Movies.Where(mov => mov.Id == 8).FirstOrDefault();
-                context.Movies.Remove(movie);
-
-                context.SaveChanges();
-                */
-
-                //get all movies
-                return context.Movies.OrderBy(x=>x.Id).ToList();
-
-                //get movie by id
-                //return context.Movies.Where(mov => mov.MovieTitle == "Kalem Kutusu").ToList();
-
-            }
+            return _context.Movies.OrderBy(x=>x.Id).ToList();
         }
+        
         [Authorize]
         [HttpPut("{id}")]
         public IEnumerable<Movie> Put(long id, Movie client)
