@@ -138,7 +138,7 @@ namespace WebAPIDenemeEntity2.Controllers
             return NoContent();
         }
 
-        private bool DirectorExists(long id)
+        public bool DirectorExists(long id)
         {
             return _context.Directors.Any(e => e.Id == id);
         }
