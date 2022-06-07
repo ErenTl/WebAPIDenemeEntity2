@@ -120,6 +120,23 @@ namespace Nunit.WebAPIDenemeEntity2.Test
         }
 
         [Test]
+        public void Directors_Controller_PutDirectorName_Test()
+        {
+            var directorsController = new DirectorsController(_context);
+            var director = directorsController.GetDirectors().Result.Value.FirstOrDefault();
+
+            String tempTimeString = DateTime.UtcNow.ToString();
+            director.FirstName = tempTimeString;
+
+            Console.WriteLine(director.Id + " " + tempTimeString);
+            directorsController.PutDirectorName((long)director.Id, director);
+
+            var directorCheck = directorsController.GetDirector((long)director.Id).Result.Value;
+            Console.WriteLine(directorCheck.FirstName);
+            Assert.AreEqual(tempTimeString, directorCheck.FirstName);
+        }
+        
+        [Test]
         public void Users_Controller_Login_Access_Token_Test()
         {
             var usersController = new UsersController(_context, _jwtsettingsIO);
