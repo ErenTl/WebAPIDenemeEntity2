@@ -48,5 +48,21 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Console.WriteLine(userKey.Result.Value.AccessToken);
             Assert.IsNotEmpty(userKey.Result.Value.AccessToken);
         }
+
+        [Test]
+        public async Task Users_Controller_PostUser_Test()
+        {
+            var usersController = new UsersController (_context, _jwtsettingsIO);
+            
+            var user = new User();
+            user.UserName = DateTime.UtcNow.ToString();
+            user.Permission = 1;
+            user.PswSha = "f9c1aa3fc037608ec954aceb21c1f7d307cb1f0bfc35ec92efda44576391536b"; // decrypted: "eren"
+
+            await usersController.PostUser(user);
+
+            var exist = _context.Users.Any(e => e.UserName == user.UserName);
+            Assert.IsTrue(exist);
+        }
     }
 }
