@@ -78,5 +78,16 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Console.WriteLine("id: " + user.Id + " user's userName was changed " + original + " to " + userChanged.UserName);
             Assert.AreEqual(user.UserName, userChanged.UserName);
         }
+
+        [Test]
+        public async Task Users_Controller_DeleteUser_Test()
+        {
+            var usersController = new UsersController(_context, _jwtsettingsIO);
+            var user = _context.Users.OrderBy(u => u.Id).LastOrDefault();
+            await usersController.DeleteUser(user.Id);
+
+            Console.WriteLine("deleted user id: " + user.Id);
+            Assert.IsFalse(_context.Users.Any(u => u.Id == user.Id));
+        }
     }
 }
