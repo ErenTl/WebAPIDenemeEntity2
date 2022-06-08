@@ -50,5 +50,17 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Console.WriteLine("MovieDirector id: " + original.Id + " get");
             Assert.AreEqual(data.MovieId, original.MovieId);
         }
+
+        [Test]
+        public async Task MovieDirectors_Controller_Put_Test()
+        {
+            var mdController = new MovieDirectorsController(_context);
+            var original = _context.MovieDirectors.FirstOrDefault();
+            var director = _context.Directors.OrderBy(d => d.Id).LastOrDefault();
+            var res = mdController.Put((long)director.Id, original).FirstOrDefault();
+
+            Console.WriteLine("MovieDirector id: " + original.Id + " | director Id was changed " + original.DirectorId + " to " + res.DirectorId);
+            Assert.AreEqual(director.Id, res.DirectorId);
+        }
     }
 }
