@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Nunit.WebAPIDenemeEntity2.Test
 {
-    public class Tests
+    public class DirectorsUnitTest
     {
 
         private MovieDBContext _context;
