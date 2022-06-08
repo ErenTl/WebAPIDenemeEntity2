@@ -14,5 +14,17 @@ namespace Nunit.WebAPIDenemeEntity2.Test2
 {
     public class MovieDirectorsUnitTest
     {
+        private MovieDBContext _context;
+
+        [SetUp]
+        public void Setup()
+        {
+            var builder = WebApplication.CreateBuilder();
+            var connectionString = builder.Configuration.GetConnectionString("MovieSiteDBTest");
+            var dbContextOptions = new DbContextOptionsBuilder<MovieDBContext>().UseNpgsql(connectionString);
+            _context = new MovieDBContext(dbContextOptions.Options);
+            _context.Database.EnsureCreated();
+        }
+
     }
 }
