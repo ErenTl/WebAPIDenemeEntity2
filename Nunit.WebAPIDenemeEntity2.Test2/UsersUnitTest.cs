@@ -64,5 +64,19 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             var exist = _context.Users.Any(e => e.UserName == user.UserName);
             Assert.IsTrue(exist);
         }
+
+        [Test]
+        public async Task Users_Controller_PutUser_Test()
+        {
+            var usersController = new UsersController(_context, _jwtsettingsIO);
+            var user = _context.Users.OrderBy(u => u.Id).FirstOrDefault();
+            var original = user.UserName;
+            user.UserName = DateTime.UtcNow.ToString();
+            await usersController.PutUser(user.Id, user);
+            var userChanged = _context.Users.Where(u => u.Id == user.Id).FirstOrDefault();
+
+            Console.WriteLine("id: " + user.Id + " user's userName was changed " + original + " to " + userChanged.UserName);
+            Assert.AreEqual(user.UserName, userChanged.UserName);
+        }
     }
 }
