@@ -4,17 +4,9 @@ using WebAPIDenemeEntity2.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System.Linq;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using System;
 using System.Threading.Tasks;
-using System.Threading;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Nunit.WebAPIDenemeEntity2.Test
 {
