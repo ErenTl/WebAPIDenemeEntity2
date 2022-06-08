@@ -68,12 +68,12 @@ namespace WebAPIDenemeEntity2.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<MovieDirector>> PostMovieDirector(MovieDirector movieDirector)
+        public IEnumerable<MovieDirector> PostMovieDirector(MovieDirector movieDirector)
         {
             _context.MovieDirectors.Add(movieDirector);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return CreatedAtAction("GetMovieDirector", new { id = movieDirector.Id }, movieDirector);
+            return _context.MovieDirectors.Where(md => md.Id == movieDirector.Id).ToList();
         }
 
         // DELETE: api/MovieDirectors/5
