@@ -39,5 +39,16 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             }
             Assert.IsTrue(exist);
         }
+
+        [Test]
+        public async Task MovieDirectors_Controller_GetMovieDirector_Test()
+        {
+            var mdController = new MovieDirectorsController(_context);
+            var original = _context.MovieDirectors.FirstOrDefault();
+            var data = mdController.GetMovieDirector(original.Id).Result.Value;
+
+            Console.WriteLine("MovieDirector id: " + original.Id + " get");
+            Assert.AreEqual(data.MovieId, original.MovieId);
+        }
     }
 }
