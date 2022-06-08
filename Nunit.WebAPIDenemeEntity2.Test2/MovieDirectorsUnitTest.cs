@@ -41,7 +41,7 @@ namespace Nunit.WebAPIDenemeEntity2.Test
         }
 
         [Test]
-        public async Task MovieDirectors_Controller_GetMovieDirector_Test()
+        public void MovieDirectors_Controller_GetMovieDirector_Test()
         {
             var mdController = new MovieDirectorsController(_context);
             var original = _context.MovieDirectors.FirstOrDefault();
