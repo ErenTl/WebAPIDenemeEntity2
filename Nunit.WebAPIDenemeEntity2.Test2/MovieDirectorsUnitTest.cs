@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Nunit.WebAPIDenemeEntity2.Test2
+namespace Nunit.WebAPIDenemeEntity2.Test
 {
     public class MovieDirectorsUnitTest
     {
