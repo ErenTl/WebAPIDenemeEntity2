@@ -62,5 +62,18 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Console.WriteLine("MovieDirector id: " + original.Id + " | director Id was changed " + original.DirectorId + " to " + res.DirectorId);
             Assert.AreEqual(director.Id, res.DirectorId);
         }
+
+        [Test]
+        public void MovieDirectors_Controller_PostMovieDirector_Test()
+        {
+            var mdController = new MovieDirectorsController(_context);
+            var md = new MovieDirector();
+            md.MovieId      = _context.Movies.FirstOrDefault().Id;
+            md.DirectorId   = (long)_context.Directors.FirstOrDefault().Id;
+            var res = mdController.PostMovieDirector(md).FirstOrDefault();
+
+            Console.WriteLine("movieDirector id: " + res.Id + " was created");
+            Assert.AreEqual(md.MovieId, res.MovieId);
+        }
     }
 }
