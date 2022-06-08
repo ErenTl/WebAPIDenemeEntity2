@@ -75,5 +75,16 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Console.WriteLine("movieDirector id: " + res.Id + " was created");
             Assert.AreEqual(md.MovieId, res.MovieId);
         }
+
+        [Test]
+        public async Task MovieDirectors_Controller_DeleteMovieDirector_Test()
+        {
+            var mdController = new MovieDirectorsController(_context);
+            var original = _context.MovieDirectors.OrderBy(md => md.Id).LastOrDefault();
+            await mdController.DeleteMovieDirector((long)original.Id);
+
+            Console.WriteLine("MovieDirector id: " + original.Id + " was deleted");
+            Assert.IsFalse(_context.MovieDirectors.Any(md => md.Id == original.Id));
+        }
     }
 }
