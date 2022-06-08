@@ -22,9 +22,6 @@ namespace Nunit.WebAPIDenemeEntity2.Test
     {
 
         private MovieDBContext _context;
-        private IOptions<JWTSettings> _jwtsettingsIO;
-        private JWTSettings _jwtsettings;
-        private string AccessToken;
         [SetUp]
         public void Setup()
         {
@@ -33,33 +30,6 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             var dbContextOptions = new DbContextOptionsBuilder<MovieDBContext>().UseNpgsql(connectionString);
             _context = new MovieDBContext(dbContextOptions.Options);
             _context.Database.EnsureCreated();
-
-            var jwtSection = builder.Configuration.GetSection("JWTSettings");
-            builder.Services.Configure<JWTSettings>(jwtSection);
-            _jwtsettings = jwtSection.Get<JWTSettings>();
-            _jwtsettingsIO = Options.Create(_jwtsettings);
-
-            //signing the token
-            //create token handler
-            var tokenHandler = new JwtSecurityTokenHandler();
-            //get the key from appsettings via JWTSettings
-            var key = Encoding.ASCII.GetBytes(_jwtsettings.SecretKey);
-            //writing token's info
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, "Deneme"),
-                    new Claim(ClaimTypes.Role, "1"),
-                }),
-                Expires = DateTime.UtcNow.AddMonths(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            AccessToken = tokenHandler.WriteToken(token);
-
         }
 
         [Test]
@@ -147,17 +117,6 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             bool exist = directorsController.DirectorExists((long)director.Id);
 
             Assert.IsFalse(exist);
-        }
-
-        [Test]
-        public void Users_Controller_Login_Access_Token_Test()
-        {
-            var usersController = new UsersController(_context, _jwtsettingsIO);
-            var user1 = _context.Users.FirstOrDefault();
-
-            var userKey = usersController.Login(user1);
-            Console.WriteLine(userKey.Result.Value.AccessToken);
-            Assert.IsNotEmpty(userKey.Result.Value.AccessToken);
         }
 
     }
