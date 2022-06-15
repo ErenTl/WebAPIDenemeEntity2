@@ -52,5 +52,18 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Console.WriteLine("id " + movieId + " movie's average rank is: " + ((double)fact/10) + "/10");
             Assert.IsTrue(fact >= 0 && fact <= 100);
         }
+
+        [Test]
+        public async Task mrfGetRankingCount_Test()
+        {
+            int movieId = 13;
+
+            var getMrfGetRankingCount = mrfContract.GetFunction("mrfGetRankingCount");
+            var task = getMrfGetRankingCount.CallAsync<int>(movieId);
+            int fact = task.Result;
+
+            Console.WriteLine("id " + movieId + " movie is voted for " + (fact) + " times");
+            Assert.IsTrue(fact >= 0);
+        }
     }
 }
