@@ -40,8 +40,6 @@ namespace Nunit.WebAPIDenemeEntity2.Test
         }
 
 
-        }
-
         [Test]
         public static async Task mrfAverageRank_Test()
         {
