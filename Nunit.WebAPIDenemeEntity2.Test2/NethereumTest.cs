@@ -23,6 +23,7 @@ namespace Nunit.WebAPIDenemeEntity2.Test
         private static string chainUrl;
         private static string networkId;
         private static Contract mrfContract;
+        private Wallet wallet;
 
         [SetUp]
         public void Setup()
@@ -37,6 +38,8 @@ namespace Nunit.WebAPIDenemeEntity2.Test
 
             var web3 = new Web3(chainUrl);
             mrfContract = web3.Eth.GetContract(contractAbi, contractAddress);
+
+            wallet = new Wallet("sell when around crowd joke perfect card wisdom trial aerobic dash shield", "");
         }
 
 
