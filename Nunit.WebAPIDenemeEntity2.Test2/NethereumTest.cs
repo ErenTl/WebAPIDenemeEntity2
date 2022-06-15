@@ -39,5 +39,20 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             mrfContract = web3.Eth.GetContract(contractAbi, contractAddress);
         }
 
+
+        }
+
+        [Test]
+        public static async Task mrfAverageRank_Test()
+        {
+            int movieId = 2;
+
+            var getMrfAverageRankContract = mrfContract.GetFunction("mrfAverageRank");
+            var task =  getMrfAverageRankContract.CallAsync<int>(movieId);
+            int fact = task.Result;
+
+            Console.WriteLine("id " + movieId + " movie's average rank is: " + ((double)fact/10) + "/10");
+            Assert.IsTrue(fact >= 0 && fact <= 100);
+        }
     }
 }
