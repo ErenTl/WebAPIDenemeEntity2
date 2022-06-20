@@ -55,6 +55,26 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             wallet = new Wallet("sell when around crowd joke perfect card wisdom trial aerobic dash shield", "");
         }
 
+        [Test]
+        public static async Task Rinkeby_GetAccountBalance_And_Transfer_Test()
+        {
+            var account = new Nethereum.Web3.Accounts.Account("d9c09ab9f9ea4eb37bff9c1a2bbdd4ae19109be4b86aad5a0085c1074da0b4ac");
+            var web3 = new Web3(account, "https://rinkeby.infura.io/v3/5e6bf1b19daa4ea4afc5efb6afe1bb0f");
+
+            var toAddress = "0x603E759D2b38b40Ef1Ad6Ae537733c3Cf1FA5946";
+
+            var transaction = web3.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(toAddress, (decimal)0.001, 2);
+
+            var balance = await web3.Eth.GetBalance.SendRequestAsync("0x66c2865772863d6e7482Acfc4117FE04749D9E08");
+            var etherAmount = Web3.Convert.FromWei(balance.Value);
+
+            Console.WriteLine(transaction.Result.TransactionHash);
+
+
+            Console.WriteLine($"Balance in Ether: {etherAmount}");
+
+
+        }
 
         [Test]
         public static async Task mrfAverageRank_Test()
