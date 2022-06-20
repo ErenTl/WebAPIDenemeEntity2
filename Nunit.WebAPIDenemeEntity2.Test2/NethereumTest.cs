@@ -12,6 +12,8 @@ using Nethereum.Contracts;
 using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Runtime.Serialization;
+using Nethereum.Hex.HexTypes;
 
 namespace Nunit.WebAPIDenemeEntity2.Test
 {
@@ -20,8 +22,14 @@ namespace Nunit.WebAPIDenemeEntity2.Test
         private static string mrfContractJsonPath;
         private static string mrfContractAbi;
         private static string mrfContractAddress;
+
+        private static string mrContractJsonPath;
+        private static string mrContractAbi;
+
+
         private static string chainUrl;
         private static string networkId;
+        private static Web3 web3;
         private static Contract mrfContract;
         private Wallet wallet;
 
@@ -29,6 +37,8 @@ namespace Nunit.WebAPIDenemeEntity2.Test
         public void Setup()
         {
             mrfContractJsonPath = (@"C:\Users\eren_\Documents\demos\temp\webentity2fortruffle-2\WebAPIDenemeEntity2\truffle\client\src\contracts\MovieRankFactory.json");
+            mrContractJsonPath = (@"C:\Users\eren_\Documents\demos\temp\webentity2fortruffle-2\WebAPIDenemeEntity2\truffle\client\src\contracts\MovieRank.json");
+
             chainUrl = "HTTP://127.0.0.1:7545";
             networkId = "5777";
 
