@@ -46,7 +46,10 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             mrfContractAbi = o1["abi"].ToString();
             mrfContractAddress = o1["networks"][networkId]["address"].ToString();
 
-            var web3 = new Web3(chainUrl);
+            JObject mrJson = JObject.Parse(File.ReadAllText(mrContractJsonPath));
+            mrContractAbi = mrJson["abi"].ToString();
+
+            web3 = new Web3(chainUrl);
             mrfContract = web3.Eth.GetContract(mrfContractAbi, mrfContractAddress);
 
             wallet = new Wallet("sell when around crowd joke perfect card wisdom trial aerobic dash shield", "");
