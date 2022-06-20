@@ -81,5 +81,58 @@ namespace Nunit.WebAPIDenemeEntity2.Test
             Console.WriteLine("id " + movieId + " movie is voted for " + (fact) + " times");
             Assert.IsTrue(fact >= 0);
         }
+
+        [Test]
+        public async Task mr_newRanking_Test()
+        {
+            int movieId = 4;
+            int rank = 10;
+            int firstAverage;
+            int finalAverage;
+            int accountRank;
+
+            var mrfGetMovieRank = mrfContract.GetFunction("getMovieRank");
+            var mrfTask = mrfGetMovieRank.CallAsync<string>(movieId);
+            var mrAddress = mrfTask.Result;
+
+            var mrContract = web3.Eth.GetContract(mrContractAbi, mrAddress);
+            firstAverage = mrContract.GetFunction("averageRank").CallAsync<int>().Result;
+
+            var addressList = mrContract.GetFunction("getRankingAddressList").CallAsync<List<string>>().Result;
+
+            Nethereum.Web3.Accounts.Account properAccount = null;
+            for(int i=0; i< 10; i++)
+            {
+                if (!(addressList.Contains(wallet.GetAccount(i).Address)))
+                {
+                    properAccount = wallet.GetAccount(i);
+                    Console.WriteLine("account number is " + i);
+                    break;
+                }
+            }
+
+            Console.WriteLine("account address is " + properAccount.Address);
+
+            Web3 accountWeb3 = new Web3(properAccount, chainUrl);
+            var accountMrContract = accountWeb3.Eth.GetContract(mrContractAbi, mrAddress);
+
+            //for eth fee history problem
+            accountWeb3.TransactionManager.UseLegacyAsDefault = true;
+
+
+
+            var mrNewRanking = accountMrContract.GetFunction("newRanking").SendTransactionAndWaitForReceiptAsync(properAccount.Address ,new HexBigInteger(3000000), new HexBigInteger(0),null,rank)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
+
+            finalAverage = mrContract.GetFunction("averageRank").CallAsync<int>().Result;
+            accountRank  = mrContract.GetFunction("getRanking").CallAsync<int>(properAccount.Address).Result;
+
+            Console.WriteLine("transaction hash is " + mrNewRanking.TransactionHash);
+            Console.WriteLine("movie id " + movieId + "| rank: " + rank + "| first average rank: " + (double)firstAverage/10 + "| final average rank: " + (double)finalAverage/10);
+
+            Assert.AreEqual(rank, accountRank);
+        }
     }
 }
