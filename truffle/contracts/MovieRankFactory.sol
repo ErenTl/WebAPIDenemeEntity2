@@ -1,11 +1,12 @@
 pragma solidity ^0.5.0;
 
 import "./MovieRank.sol"; 
+import "./CloneFactory.sol"; 
 
-contract MovieRankFactory is MovieRank{
+contract MovieRankFactory is MovieRank, CloneFactory{
 
-    MovieRank[] public movieRankArray;
-
+    address[] public movieRankArray;
+    address public impl;
     address owner = msg.sender;
 
     modifier onlyOwner() {
@@ -13,20 +14,22 @@ contract MovieRankFactory is MovieRank{
         _;
     }
 
-    constructor() public { //movieRankArray'ın 0 indexi kodda çok fazla sıkıntıya sebep olduğu için kullanılmayan
+    constructor(address _impl) public { //movieRankArray'ın 0 indexi kodda çok fazla sıkıntıya sebep olduğu için kullanılmayan
         MovieRank movieRank = new MovieRank();//bir nesneyi array'e atadım
-        movieRankArray.push(movieRank);
+        impl = _impl;//impl adresi _impl'e atadım
+        movieRankArray.push(address(movieRank));//movieRankArray'ın 0 indexine movieRank'ın adresini atadım
     }
 
 
     mapping (uint => uint) public movieIdtoIndex;
     uint[] public movieIdList;
 
-    function createMovieRankContract(uint _movieId) public onlyOwner()  {
+    function createMovieRankContract(uint _movieId) public onlyOwner() returns(address) {
         require(movieIdtoIndex[_movieId]==0);
-        MovieRank movieRank = new MovieRank();
+        address movieRank = createClone(impl);
         movieIdtoIndex[_movieId] = (movieRankArray.push(movieRank))-1;
         movieIdList.push(_movieId);
+        return movieRank;
     }
 
     function getMovieRank(uint _movieId) public view returns(MovieRank) { //movie id den MovieRank kontratını getiriyor
