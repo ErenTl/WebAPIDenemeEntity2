@@ -7,6 +7,7 @@ var MovieRankFactory = artifacts.require("./MovieRankFactory.sol");
 
 module.exports = async function(deployer) {
   //await deployer.deploy(SimpleStorage);
+  await deployer.deploy(CloneFactory);
   await deployer.deploy(MovieRank);
-  await deployer.deploy(MovieRankFactory);
+  await deployer.deploy(MovieRankFactory, MovieRank.address);
 };
