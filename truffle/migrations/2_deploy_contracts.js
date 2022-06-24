@@ -1,3 +1,4 @@
+var CloneFactory = artifacts.require("./CloneFactory.sol");
 //var SimpleStorage = artifacts.require("./SimpleStorage.sol");
 var MovieRank = artifacts.require("./MovieRank.sol");
 //var MovieRank_2 = artifacts.require("./MovieRank_2.sol");
