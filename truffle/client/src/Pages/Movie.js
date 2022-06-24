@@ -86,7 +86,10 @@ export class Movie extends Component{
     }
 
     async bcCreateMRContract(mov) {
-        await this.state.mrfContract.methods.createMovieRankContract(mov.id).send({from:this.state.accounts[0],gas:3000000});
+        var estimatedGas = await this.state.mrfContract.methods.createMovieRankContract(mov.id).estimateGas({from:this.state.accounts[0]});
+        alert("estimatedGas: " + estimatedGas);
+        await this.state.mrfContract.methods.createMovieRankContract(mov.id).send({from:this.state.accounts[0],gas:estimatedGas});
+        
         window.location.reload(false);
     }
 
