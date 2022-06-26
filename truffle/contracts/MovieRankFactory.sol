@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "./MovieRank.sol"; 
-import "./CloneFactory.sol"; 
+import "./utils/CloneFactory.sol"; 
 
 contract MovieRankFactory is MovieRank, CloneFactory{
 
