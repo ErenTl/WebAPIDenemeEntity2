@@ -1,15 +1,25 @@
 pragma solidity ^0.5.0;
 
-contract MovieRank{
+import "@openzeppelin/upgrades-core/contracts/Initializable.sol";
+
+contract MovieRank is Initializable {
 
     struct MovieRanking{
         bool isValid;
         uint8 rank;
     }
-
-
+    
+    string public movieName;
      mapping (address => MovieRanking) private ranking;
      address[] public rankingList;
+
+    function initialize(string memory _movieName) public initializer {
+        movieName = _movieName;
+    }
+
+    function getMovieName() public view returns(string memory) {
+        return movieName;
+    }
 
     function isValid(address _address) private view returns(bool) {
          return ranking[_address].isValid;
