@@ -36,6 +36,10 @@ contract MovieRankFactory is MovieRank, CloneFactory{
         return MovieRank(address(movieRankArray[movieIdtoIndex[_movieId]]));
     }
 
+    function getMovieRankAddress(uint _movieId) public view returns(address) { //movie id den MovieRank kontratınının adresini getiriyor
+        return (address(movieRankArray[movieIdtoIndex[_movieId]]));
+    }
+
 
     /*function mrfVote(uint _movieId, uint8 _rank) public returns(uint) {
         require(movieIdtoIndex[_movieId]!=0);
