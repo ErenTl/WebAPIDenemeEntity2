@@ -1,6 +1,7 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.5.0;
 
-import "@openzeppelin/upgrades-core/contracts/Initializable.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract MovieRank is Initializable {
 
@@ -33,7 +34,8 @@ contract MovieRank is Initializable {
         require(ranking[msg.sender].isValid==false && _rank >=0 && _rank <= 10);
         ranking[msg.sender].isValid = true;
         ranking[msg.sender].rank = _rank;
-        return rankingList.push(msg.sender)-1;
+        rankingList.push(msg.sender);
+        return rankingList.length-1;
     }
 
     function getRanking(address _address) public view returns(uint8) {

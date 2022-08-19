@@ -1,4 +1,5 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.5.0;
 
 import "./MovieRank.sol"; 
 import "./utils/CloneFactory.sol"; 
@@ -27,7 +28,8 @@ contract MovieRankFactory is MovieRank, CloneFactory{
     function createMovieRankContract(uint _movieId) public onlyOwner() returns(address) {
         require(movieIdtoIndex[_movieId]==0);
         address movieRank = createClone(impl);
-        movieIdtoIndex[_movieId] = (movieRankArray.push(movieRank))-1;
+        movieRankArray.push(movieRank);
+        movieIdtoIndex[_movieId] = movieRankArray.length-1; 
         movieIdList.push(_movieId);
         return movieRank;
     }
