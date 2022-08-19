@@ -5,6 +5,7 @@ import getWeb3 from "./getWeb3";
 import {Home} from "./Pages/Home";
 import {Movie} from './Pages/Movie';
 import {Director} from './Pages/Director';
+import {Token} from './Pages/Token';
 import {BrowserRouter, Route, Routes, NavLink} from 'react-router-dom';
 
 import "./App.css";
@@ -117,13 +118,21 @@ class App extends Component {
           </li>
         </ul>
         
+        <ul className='navbar-nav'>
+          <li className='nav-item- m-1'>
+            <NavLink className='btn btn-light btn-outline-primary'  to='/token'>
+              Token
+            </NavLink>
+          </li>
+        </ul>
 
       </nav>
 
       <Routes>
           <Route path="/home"  element={<Home />} />
-          <Route end path="/movie" deneme="olsana" element={<Movie />} />
+          <Route end path="/movie" element={<Movie />} />
           <Route path="/director" element={<Director />} />
+          <Route path="/token" element={<Token />} />
       </Routes>
       
     </div>
